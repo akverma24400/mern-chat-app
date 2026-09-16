@@ -2,7 +2,8 @@ name: hello
 on:
   push:
     branches:
-      - main
+      - master
+
 jobs:
   hello:
     runs-on: ubuntu-latest
