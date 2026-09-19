@@ -40,7 +40,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service: [frontend, backend]
+        include:
+          - service: frontend
+            context: ./frontend
+            dockerfile: ./frontend/Dockerfile
+
+          - service: backend
+            context: .
+            dockerfile: ./backend/Dockerfile
     
     steps:
       - name: Code Checkout
@@ -60,7 +67,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: ./${{matrix.service}}
-          file: ./${{matrix.service}}/Dockerfile
+          file: ./${{matrix.dockerfile}}
           push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/mern-chat-${{ matrix.service }}:${{ github.sha }}
