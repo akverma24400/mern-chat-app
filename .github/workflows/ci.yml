@@ -1,4 +1,4 @@
-name: CI pipeline
+name: DevSecOps-CI pipeline
 on:
   push:
     branches:
@@ -28,6 +28,31 @@ jobs:
 
       - name: Run Linter
         run: npm run lint
+
+  sonarqube:
+    name: SonarQube analysis
+    needs: frontend-lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Scan code and check quality gate
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
+
 
   
   
